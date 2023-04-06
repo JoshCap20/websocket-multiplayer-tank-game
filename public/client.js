@@ -15,6 +15,7 @@ class Tank {
         this.lastFired = 0;
         this.cooldown = 500; // Cooldown time in milliseconds
         this.level = 1;
+        this.died = false;
     }
 
     moveForward() {
@@ -42,7 +43,7 @@ class Tank {
     }
 
     fire() {
-        if (!this.canFire()) {
+        if (!this.canFire() || this.died) {
             return;
         }
         this.lastFired = Date.now();
@@ -178,6 +179,7 @@ function gameLoop() {
 }
 
 function displayDestroyedMessage() {
+    localTank.died = true;
     const messageElement = document.createElement('div');
     messageElement.style.position = 'fixed';
     messageElement.style.top = '50%';
@@ -190,9 +192,7 @@ function displayDestroyedMessage() {
 
     document.body.appendChild(messageElement);
 
-    setTimeout(() => {
-        document.body.removeChild(messageElement);
-    }, 3000);
+    
 }
        
 function levelUp() {
@@ -200,4 +200,7 @@ function levelUp() {
 
     const levelElement = document.getElementById('level');
     levelElement.innerText = localTank.level;
+
+    const killsElement = document.getElementById('kills');
+    killsElement.innerText = localTank.level - 1;
 }

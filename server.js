@@ -1,5 +1,16 @@
 const WebSocket = require("ws");
-const server = new WebSocket.Server({ port: 8080 });
+const http = require("http");
+const express = require("express");
+const path = require("path");
+
+const app = express();
+
+// Serve static files from the 'public' directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+const server = http.createServer(app);
+
+const wss = new WebSocket.Server({ server });
 
 const mapHeight = Math.random() * 1000 + 500;
 const mapWidth = Math.random() * 1000 + 500;
@@ -10,7 +21,7 @@ let obstacles = generateRandomObstacles();
 
 DAMAGE_DISTANCE = 45;
 
-server.on("connection", (socket) => {
+wss.on("connection", (ws) => {
   let playerId = createPlayerId();
   let spawnPoint = getRandomSpawnPoint();
   players.set(playerId, {
@@ -23,10 +34,10 @@ server.on("connection", (socket) => {
     kills: 0,
   });
 
-  socket.send(JSON.stringify({ type: "playerId", playerId, startX: spawnPoint.x, startY: spawnPoint.y }));
-  socket.send(JSON.stringify({ type: "mapSize", height: mapHeight, width: mapWidth }));
+  ws.send(JSON.stringify({ type: "playerId", playerId, startX: spawnPoint.x, startY: spawnPoint.y }));
+  ws.send(JSON.stringify({ type: "mapSize", height: mapHeight, width: mapWidth }));
 
-  socket.on("message", (message) => {
+  ws.on("message", (message) => {
     let data = JSON.parse(message);
     switch (data.type) {
       case "update":
@@ -41,13 +52,13 @@ server.on("connection", (socket) => {
     }
   });
 
-  socket.on("close", () => {
+  ws.on("close", () => {
     players.delete(playerId);
   });
 
   setInterval(() => {
     updateBullets();
-    socket.send(
+    ws.send(
       JSON.stringify({
         type: "update",
         players: Array.from(players.values()),
@@ -200,3 +211,8 @@ function getRandomSpawnPoint() {
 
   return { x, y };
 }
+
+// Listen on port 8080 for both HTTP and WebSocket
+server.listen(8080, () => {
+  console.log("Server listening on port 8080");
+});

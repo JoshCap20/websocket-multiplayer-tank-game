@@ -39,19 +39,58 @@
       margin-top: 5px;
       font-size: 24px;
     }
+    .popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+  }
+
+  .popup-content {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
   </style>
 </head>
 
 <body>
-  <form id="tankTypeForm">
-    <label for="tankType">Select a tank type:</label>
-    <select name="tankType" id="tankType">
-      <option value="light">Light</option>
-      <option value="medium">Medium</option>
-      <option value="heavy">Heavy</option>
-    </select>
-    <button type="submit">Start Game</button>
-  </form>
+  <div class="popup" id="popup">
+    <div class="popup-content">
+      <h2>Welcome to the Tank Game</h2>
+      <p>Select your tank and start playing!</p>
+      <form id="tankTypeForm">
+        <label for="tankType">Select a tank type:</label>
+        <select name="tankType" id="tankType">
+          <option value="light">Light</option>
+          <option value="medium">Medium</option>
+          <option value="heavy">Heavy</option>
+        </select>
+        <button type="submit">Start Game</button>
+      </form>
+    </div>
+  </div>
   <div class="stats-bar">
     <a href="https://github.com/JoshCap20/websocket-multiplayer-tank-game" target="_blank" class="stats-item">
       <div class="stats-value">

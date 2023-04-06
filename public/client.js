@@ -194,7 +194,7 @@ function drawTank(x, y, rotation, level) {
 
   // Draw the body of the tank
   ctx.fillStyle = "green";
-  ctx.fillRect(-20, -10, 40 + (level*5), 20 + (level*2));
+  ctx.fillRect(-20, -10, 40 + (level*5), 20);
 
   // Draw the gun of the tank
   // normal fallback
@@ -361,7 +361,7 @@ function setTankAttributes(tankType) {
 document.getElementById("tankTypeForm").addEventListener("submit", (event) => {
   event.preventDefault();
   const tankType = document.getElementById("tankType").value;
-  event.target.style.display = "none";
-  canvas.style.display = "block";
   setTankAttributes(tankType);
+  document.getElementById("popup").style.display = "none";
+  canvas.style.display = "block";
 });

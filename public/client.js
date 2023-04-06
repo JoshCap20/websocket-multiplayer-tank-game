@@ -6,6 +6,8 @@ let players = [];
 let bullets = [];
 let obstacles = [];
 
+let __health = 100;
+
 // Tank model
 class Tank {
   constructor(x, y, rotation) {
@@ -117,6 +119,7 @@ socket.onmessage = (event) => {
     case "destroyed":
       if (data.playerId === localTank.id) {
         displayDestroyedMessage();
+        updateHealth(0);
       }
       break;
     case "levelUp":
@@ -203,6 +206,10 @@ function drawHealthBar(player) {
   const healthWidth = (width * player.health) / 100;
   ctx.fillStyle = "green";
   ctx.fillRect(x, y, healthWidth, height);
+
+  if (player.id === localTank.id && player.health != __health) {
+    updateHealth(player.health);
+  }
 }
 
 function gameLoop() {
@@ -234,4 +241,11 @@ function levelUp() {
 
   const killsElement = document.getElementById("kills");
   killsElement.innerText = localTank.level - 1;
+}
+
+function updateHealth(health) {
+    const healthElement = document.getElementById("health");
+    healthElement.innerText = health;
+
+    __health = health;
 }

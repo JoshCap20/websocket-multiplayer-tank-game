@@ -73,32 +73,20 @@ class Tank {
     if (!this.canFire() || this.died) {
       return;
     }
+    
     this.lastFired = Date.now();
-    if (this.level >= 3) {
+    const bullets = this.level >= 3 ? 2 : 1;
+    const offsets = bullets == 2 ? [-2, 3] : [0];
+  
+    for (let offset of offsets) {
       let data = {
         type: "fire",
-        x: this.x - 2 + Math.cos(this.rotation),
-        y: this.y - 2 + Math.sin(this.rotation),
-        rotation: this.rotation,
-      };
-      let data2 = {
-        type: "fire",
-        x: this.x + 3 + Math.cos(this.rotation),
-        y: this.y + 3 + Math.sin(this.rotation),
-        rotation: this.rotation,
-      };
-      socket.send(JSON.stringify(data));
-      socket.send(JSON.stringify(data2));
-    } else {
-      let data = {
-        type: "fire",
-        x: this.x + Math.cos(this.rotation),
-        y: this.y + Math.sin(this.rotation),
+        x: this.x + offset + Math.cos(this.rotation),
+        y: this.y + offset + Math.sin(this.rotation),
         rotation: this.rotation,
       };
       socket.send(JSON.stringify(data));
     }
-    
   }
 }
 

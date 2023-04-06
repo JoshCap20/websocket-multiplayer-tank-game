@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>Multiplayer Tank Game</title>
   <style>
-    canvas { display: block; margin: 0 auto; }
+    canvas {
+      display: block;
+      margin: 0 auto;
+    }
+
     .stats-bar {
       position: absolute;
       top: 10px;
@@ -19,21 +24,26 @@
       border: 2px solid #0c0606;
       border-radius: 5px;
     }
+
     .stats-item {
       margin: 0 10px;
     }
+
     .stats-label {
       font-weight: bold;
     }
+
     .stats-value {
       margin-top: 5px;
       font-size: 24px;
     }
   </style>
 </head>
+
 <body>
   <a href="https://github.com/JoshCap20/websocket-world-of-tanks" target="_blank">
-  <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub">
+    <img style="position: absolute; top: 0; right: 0; border: 0;"
+      src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub">
   </a>
   <div class="stats-bar">
     <div class="stats-item">
@@ -52,4 +62,5 @@
   <canvas id="gameCanvas" width="800" height="600"></canvas>
   <script src="client.js"></script>
 </body>
+
 </html>

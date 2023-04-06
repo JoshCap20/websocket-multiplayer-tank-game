@@ -12,11 +12,11 @@ let localTank = null;
 
 let __health = 100;
 
-canvas.width = document.body.clientWidth;
-canvas.height = document.body.clientHeight;
+canvas.width = window.innerWidth - 25;
+canvas.height = window.innerHeight - 25;
 
-const viewportWidth = document.body.clientWidth;
-const viewportHeight = document.body.clientHeight;
+let viewportWidth = canvas.width;
+let viewportHeight = canvas.height;
 
 
 
@@ -299,3 +299,11 @@ function updateHealth(health) {
 
     __health = health;
 }
+
+window.addEventListener('resize', function() {
+  canvas.width = window.innerWidth - 10;
+  canvas.height = window.innerHeight - 15;
+
+  viewportWidth = canvas.width;
+  viewportHeight = canvas.height;
+});

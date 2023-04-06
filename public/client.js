@@ -74,13 +74,31 @@ class Tank {
       return;
     }
     this.lastFired = Date.now();
-    let data = {
-      type: "fire",
-      x: this.x + Math.cos(this.rotation),
-      y: this.y + Math.sin(this.rotation),
-      rotation: this.rotation,
-    };
-    socket.send(JSON.stringify(data));
+    if (this.level >= 3) {
+      let data = {
+        type: "fire",
+        x: this.x - 2 + Math.cos(this.rotation),
+        y: this.y - 2 + Math.sin(this.rotation),
+        rotation: this.rotation,
+      };
+      let data2 = {
+        type: "fire",
+        x: this.x + 3 + Math.cos(this.rotation),
+        y: this.y + 3 + Math.sin(this.rotation),
+        rotation: this.rotation,
+      };
+      socket.send(JSON.stringify(data));
+      socket.send(JSON.stringify(data2));
+    } else {
+      let data = {
+        type: "fire",
+        x: this.x + Math.cos(this.rotation),
+        y: this.y + Math.sin(this.rotation),
+        rotation: this.rotation,
+      };
+      socket.send(JSON.stringify(data));
+    }
+    
   }
 }
 
@@ -187,8 +205,19 @@ function drawTank(x, y, rotation, level) {
   ctx.fillRect(-20, -10, 40 + (level*5), 20 + (level*2));
 
   // Draw the gun of the tank
-  ctx.fillStyle = "gray";
-  ctx.fillRect(20, -3, 15 + (level*3), 6);
+  // normal fallback
+  // ctx.fillStyle = "gray";
+  // ctx.fillRect(20, -3, 15 + (level*3), 6);
+
+  // testing level up things
+  if (level >= 3) {
+    ctx.fillStyle = "gray";
+    ctx.fillRect(10, -7, 15 + (level*3), 6);
+    ctx.fillRect(10, 0, 15 + (level*3), 6);
+  } else {
+    ctx.fillStyle = "gray";
+    ctx.fillRect(20, -3, 15 + (level*3), 6);
+  }
 
   ctx.restore();
 }
@@ -210,8 +239,8 @@ function drawBullet(x, y) {
 function drawHealthBar(player) {
   const width = 40;
   const height = 5;
-  const x = player.x - width / 2;
-  const y = player.y - 20;
+  const x = player.x + 5 - width / 2;
+  const y = player.y - 30;
 
   ctx.fillStyle = "red";
   ctx.fillRect(x, y, width, height);

@@ -18,6 +18,7 @@ canvas.height = window.innerHeight - 25;
 let viewportWidth = canvas.width;
 let viewportHeight = canvas.height;
 
+canvas.style.display = "none";
 
 
 // Tank model
@@ -31,11 +32,13 @@ class Tank {
     this.cooldown = 500; // Cooldown time in milliseconds
     this.level = 1;
     this.died = false;
+    this.speed = 1;
+    this.bullets = 1;
   }
 
   moveForward() {
-    const newX = this.x + Math.cos(this.rotation) * 4 * this.level;
-    const newY = this.y + Math.sin(this.rotation) * 4 * this.level;
+    const newX = this.x + Math.cos(this.rotation) * this.speed + (this.level - 1);
+    const newY = this.y + Math.sin(this.rotation) * this.speed + (this.level - 1);
 
     if (!collidesWithObstacle(newX, newY, 40, 20) &&
         newX >= 20 && newX <= mapWidth - 20 &&
@@ -46,8 +49,8 @@ class Tank {
   }
 
   moveBackward() {
-    const newX = this.x - Math.cos(this.rotation) * 1.5;
-    const newY = this.y - Math.sin(this.rotation) * 1.5;
+    const newX = this.x - Math.cos(this.rotation) * (this.speed / 2) + (this.level - 1);
+    const newY = this.y - Math.sin(this.rotation) * (this.speed / 2) + (this.level - 1);
 
     if (!collidesWithObstacle(newX, newY, 40, 20) &&
         newX >= 20 && newX <= mapWidth - 20 &&
@@ -58,11 +61,11 @@ class Tank {
   }
 
   rotateLeft() {
-    this.rotation -= 0.05;
+    this.rotation -= 0.05 * (this.speed / 2);
   }
 
   rotateRight() {
-    this.rotation += 0.05;
+    this.rotation += 0.05 * (this.speed / 2);
   }
 
   canFire() {
@@ -77,15 +80,16 @@ class Tank {
     this.lastFired = Date.now();
     const bullets = this.level >= 3 ? 2 : 1;
     const offsets = bullets == 2 ? [-2, 3] : [0];
-  
     for (let offset of offsets) {
-      let data = {
-        type: "fire",
-        x: this.x + offset + Math.cos(this.rotation),
-        y: this.y + offset + Math.sin(this.rotation),
-        rotation: this.rotation,
-      };
-      socket.send(JSON.stringify(data));
+      for (let i = 0; i < this.bullets; i++) {
+        let data = {
+          type: "fire",
+          x: this.x + offset + Math.cos(this.rotation),
+          y: this.y + offset + Math.sin(this.rotation),
+          rotation: this.rotation,
+        };
+        socket.send(JSON.stringify(data));
+      }
     }
   }
 }
@@ -194,16 +198,14 @@ function drawTank(x, y, rotation, level) {
 
   // Draw the gun of the tank
   // normal fallback
-  // ctx.fillStyle = "gray";
+  ctx.fillStyle = "gray";
   // ctx.fillRect(20, -3, 15 + (level*3), 6);
 
   // testing level up things
   if (level >= 3) {
-    ctx.fillStyle = "gray";
     ctx.fillRect(10, -7, 15 + (level*3), 6);
     ctx.fillRect(10, 0, 15 + (level*3), 6);
   } else {
-    ctx.fillStyle = "gray";
     ctx.fillRect(20, -3, 15 + (level*3), 6);
   }
 
@@ -330,4 +332,36 @@ window.addEventListener('resize', function() {
 
   viewportWidth = canvas.width;
   viewportHeight = canvas.height;
+});
+
+
+function setTankAttributes(tankType) {
+  if (localTank == null) return;
+  localTank.type = tankType;
+  switch (tankType) {
+    case "light":
+      localTank.speed = 8;
+      localTank.cooldown = 250;
+      break;
+    case "medium":
+      localTank.bullets = 2;
+      localTank.speed = 4;
+      break;
+    case "heavy":
+      localTank.bullets = 3;
+      localTank.speed = 2;
+      localTank.cooldown = 750;
+      break;
+    default:
+      localTank.speed = 4;
+      break;
+  }
+};
+
+document.getElementById("tankTypeForm").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const tankType = document.getElementById("tankType").value;
+  event.target.style.display = "none";
+  canvas.style.display = "block";
+  setTankAttributes(tankType);
 });

@@ -121,9 +121,9 @@ function updateBullets() {
         let distance = Math.sqrt(dx * dx + dy * dy);
 
         if (distance < 40) {
-          // Calculate damage based on the attacker's level
+          // Calculate damage based on the attacker's level up to 20 a shot
           const attacker = players.get(bullet.playerId);
-          const damage = attacker.level * 10;
+          const damage = Math.min(10 + (attacker.level - 1) / 2 * 5, 20);
 
           player.health -= damage;
           bullets.delete(bulletId);

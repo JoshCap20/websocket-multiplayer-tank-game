@@ -36,6 +36,7 @@ Open your browser and go to http://localhost:8081 to play the game (or whatever 
 
 ## Controls
 - Arrow Up: Move forward
+- Arrow Down: Move backward
 - Arrow Left: Rotate left
 - Arrow Right: Rotate right
 - Space: Fire bullet

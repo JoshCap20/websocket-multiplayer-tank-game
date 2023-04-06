@@ -26,14 +26,12 @@ A simple, fast-paced, multiplayer tank game built using Node.js and JavaScript t
     ```npm install```
 
 ## Running the game (Server)
-1. Start the WebSocket server:  
+Start the WebSocket and HTTP server:  
     ```npm start```
 
-2. In another terminal, start the HTTP server:  
-    ```npm run serve```
 
 ## Playing the game (Client)
-Open your browser and go to http://localhost:8081 to play the game (or whatever port the http server is on).
+Open your browser and go to http://localhost:8080 to play the game (or whatever port the server is on).
 
 ## Controls
 - Arrow Up: Move forward

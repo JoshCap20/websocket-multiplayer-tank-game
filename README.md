@@ -15,7 +15,8 @@ A simple multiplayer tank game built using Node.JS, JavaScript, Canvas, and WebS
 
 ## Installation
 1. Clone the repository:
-   ```bash  git clone https://github.com/JoshCap20/websocket-world-of-tanks```
+   ```bash  
+   git clone https://github.com/JoshCap20/websocket-world-of-tanks```
 
 2. Change directory to the project folder:
     ```cd websocket-world-of-tanks```

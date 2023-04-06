@@ -130,6 +130,9 @@ socket.onmessage = (event) => {
     case "playerId":
       localTank.id = data.playerId;
       break;
+    case "mapSize":
+      canvas.width = data.width;
+      canvas.height = data.height;
   }
 };
 

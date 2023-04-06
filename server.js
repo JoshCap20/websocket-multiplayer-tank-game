@@ -1,6 +1,9 @@
 const WebSocket = require("ws");
 const server = new WebSocket.Server({ port: 8080 });
 
+const mapHeight = Math.random() * 1000 + 500;
+const mapWidth = Math.random() * 1000 + 500;
+
 let players = new Map();
 let bullets = new Map();
 let obstacles = generateRandomObstacles(10); // Generate 10 random obstacles
@@ -20,6 +23,7 @@ server.on("connection", (socket) => {
   });
 
   socket.send(JSON.stringify({ type: "playerId", playerId }));
+  socket.send(JSON.stringify({ type: "mapSize", height: mapHeight, width: mapWidth }));
 
   socket.on("message", (message) => {
     let data = JSON.parse(message);
@@ -152,8 +156,8 @@ function generateRandomObstacles(numObstacles) {
   const obstacles = [];
 
   for (let i = 0; i < numObstacles; i++) {
-    const x = Math.random() * (800 - 100);
-    const y = Math.random() * (600 - 100);
+    const x = Math.random() * (mapHeight - 100);
+    const y = Math.random() * (mapWidth - 100);
     const width = 50 + Math.random() * 100;
     const height = 50 + Math.random() * 100;
 

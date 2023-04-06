@@ -162,7 +162,7 @@ function sendLevelUp(attackerId, attackerLevel) {
     playerId: attackerId,
     level: attackerLevel,
   };
-  server.clients.forEach((client) => {
+  wss.clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {
       client.send(JSON.stringify(levelUpData));
     }
@@ -174,7 +174,7 @@ function sendDestroyed(playerId) {
     type: "destroyed",
     playerId: playerId,
   };
-  server.clients.forEach((client) => {
+  wss.clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {
       client.send(JSON.stringify(destroyedData));
     }

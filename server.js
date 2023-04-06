@@ -242,3 +242,11 @@ server.listen(8080, () => {
     console.log('Play with anyone on your network: ' + add + ':8080');
   })
 });
+
+// +2 health every 6 seconds
+setInterval(() => {
+  players.forEach((player) => {
+    player.health = Math.min(player.health + 2, 100);
+  });
+}
+, 6000);

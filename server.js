@@ -107,6 +107,7 @@ function addBullet(playerId, data) {
     y: data.y,
     rotation: data.rotation,
     playerId: playerId,
+    time: Date.now(), // temporary fix for deleting missed bullets
   });
 }
 
@@ -150,9 +151,14 @@ function updateBullets() {
       }
     });
 
-    if (bullet.x < 0 || bullet.x > mapHeight || bullet.y < 0 || bullet.y > mapWidth) {
+    if (bullet.time + 3700 < Date.now()) {
       bullets.delete(bulletId);
     }
+
+    // need to debug why this is not working
+    // if (bullet.x < 0 || bullet.x > mapHeight || bullet.y < 0 || bullet.y > mapWidth) {
+    //   bullets.delete(bulletId);
+    // }
   });
 }
 

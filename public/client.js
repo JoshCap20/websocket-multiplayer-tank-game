@@ -3,6 +3,7 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 let players = [];
+let bullets = [];
 
 // Tank model
 class Tank {
@@ -10,6 +11,8 @@ class Tank {
         this.x = x;
         this.y = y;
         this.rotation = rotation;
+        this.lastFired = 0;
+        this.cooldown = 500; // Cooldown time in milliseconds
     }
 
     moveForward() {
@@ -23,6 +26,24 @@ class Tank {
 
     rotateRight() {
         this.rotation += 0.05;
+    }
+
+    canFire() {
+        return Date.now() - this.lastFired >= this.cooldown;
+    }
+
+    fire() {
+        if (!this.canFire()) {
+            return;
+        }
+        this.lastFired = Date.now();
+        let data = {
+            type: 'fire',
+            x: this.x + Math.cos(this.rotation) * 35,
+            y: this.y + Math.sin(this.rotation) * 35,
+            rotation: this.rotation,
+        };
+        socket.send(JSON.stringify(data));
     }
 }
 
@@ -41,6 +62,9 @@ document.addEventListener('keydown', (e) => {
         case 'ArrowRight':
             localTank.rotateRight();
             break;
+        case ' ':
+            localTank.fire();
+            break;
     }
 });
 
@@ -49,9 +73,14 @@ socket.onmessage = (event) => {
     switch (data.type) {
         case 'update':
             players = data.players;
+            bullets = data.bullets;
+            break;
+        case 'destroyed':
+            displayDestroyedMessage();
             break;
     }
 };
+
 
 socket.onopen = () => {
     gameLoop();
@@ -72,8 +101,14 @@ function draw() {
 
     players.forEach((player) => {
         drawTank(player.x, player.y, player.rotation);
+        drawHealthBar(player);
+    });
+
+    bullets.forEach((bullet) => {
+        drawBullet(bullet.x, bullet.y);
     });
 }
+
 
 function drawTank(x, y, rotation) {
     ctx.save();
@@ -91,8 +126,50 @@ function drawTank(x, y, rotation) {
     ctx.restore();
 }
 
+function drawHealthBar(player) {
+    const width = 40;
+    const height = 5;
+    const x = player.x - width / 2;
+    const y = player.y - 20;
+
+    ctx.fillStyle = 'red';
+    ctx.fillRect(x, y, width, height);
+
+    const healthWidth = (width * player.health) / 100;
+    ctx.fillStyle = 'green';
+    ctx.fillRect(x, y, healthWidth, height);
+}
+
+function drawBullet(x, y) {
+    ctx.save();
+    ctx.fillStyle = 'black';
+    ctx.beginPath();
+    ctx.arc(x, y, 3, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.restore();
+}
+
 function gameLoop() {
     update();
     draw();
     requestAnimationFrame(gameLoop);
 }
+
+function displayDestroyedMessage() {
+    const messageElement = document.createElement('div');
+    messageElement.style.position = 'fixed';
+    messageElement.style.top = '50%';
+    messageElement.style.left = '50%';
+    messageElement.style.transform = 'translate(-50%, -50%)';
+    messageElement.style.fontSize = '24px';
+    messageElement.style.fontWeight = 'bold';
+    messageElement.style.color = 'red';
+    messageElement.innerText = 'Your tank was destroyed!';
+
+    document.body.appendChild(messageElement);
+
+    setTimeout(() => {
+        document.body.removeChild(messageElement);
+    }, 3000);
+}
+       

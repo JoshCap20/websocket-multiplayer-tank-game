@@ -11,9 +11,12 @@ A simple, fast-paced, multiplayer tank game built using Node.js and JavaScript t
 - Leveling up system
 - Randomly generated maps with obstacles and spawning
 
-### To Be Added:
+### To Be Added
 - Tank upgrade selections
 - Tank types (light, medium, heavy)
+
+### Bugs
+- Incorrectly painted out of bounds on some size browsers
 
 ## Installation
 1. Clone the repository:

@@ -114,6 +114,10 @@ function updateBullets() {
     bullet.x += Math.cos(bullet.rotation) * 3;
     bullet.y += Math.sin(bullet.rotation) * 3;
 
+    if (collidesWithObstacle(bullet.x, bullet.y, 1, 1)) {
+      bullets.delete(bulletId);
+    }
+
     players.forEach((player, playerId) => {
       if (playerId !== bullet.playerId) {
         let dx = player.x - bullet.x;

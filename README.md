@@ -8,12 +8,9 @@ A simple, fast-paced, multiplayer tank game built using Node.js and JavaScript t
 - Tank movement and rotation
 - Firing bullets with damage and cooldown
 - Health bars and tank destruction
-- Leveling up system
-- Randomly generated maps with obstacles and spawning
-
-### To Be Added
-- Tank upgrade selections
-- Tank types (light, medium, heavy)
+- Progression system (dual guns, etc)
+- Randomly generated sized maps with obstacles and spawning
+- Multiple types of tanks (light, medium, heavy, super heavy)
 
 ### Bugs
 - Incorrectly painted out of bounds on some size browsers

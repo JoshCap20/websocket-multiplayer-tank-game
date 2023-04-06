@@ -184,11 +184,11 @@ function drawTank(x, y, rotation, level) {
 
   // Draw the body of the tank
   ctx.fillStyle = "green";
-  ctx.fillRect(-20, -10, 40 + (level*5), 20 + (level*5));
+  ctx.fillRect(-20, -10, 40 + (level*5), 20 + (level*2));
 
   // Draw the gun of the tank
   ctx.fillStyle = "gray";
-  ctx.fillRect(20, -3, 15, 6);
+  ctx.fillRect(20, -3, 15 + (level*3), 6);
 
   ctx.restore();
 }
@@ -220,6 +220,13 @@ function drawHealthBar(player) {
   ctx.fillStyle = "green";
   ctx.fillRect(x, y, healthWidth, height);
 
+  // add text above with player.id and player.level
+  ctx.fillStyle = "gray";
+  ctx.font = "10px Arial";
+  ctx.fillText(player.id.substring(10,15), x, y - 5);
+  ctx.fillStyle = "black";
+  ctx.fillText(player.level, x + width - 10, y - 5);
+
   if (player.id === localTank.id && player.health != __health) {
     updateHealth(player.health);
   }
@@ -228,10 +235,10 @@ function drawHealthBar(player) {
 function collidesWithObstacle(x, y, width, height) {
   for (const obstacle of obstacles) {
     if (
-      x + width / 2 > obstacle.x &&
-      x - width / 2 < obstacle.x + obstacle.width &&
-      y + height / 2 > obstacle.y &&
-      y - height / 2 < obstacle.y + obstacle.height
+      x + width / 2 > obstacle.x + 6 &&
+      x - width / 2 < obstacle.x + obstacle.width - 6 &&
+      y + height / 2 > obstacle.y + 6 &&
+      y - height / 2 < obstacle.y + obstacle.height - 6
     ) {
       return true;
     }

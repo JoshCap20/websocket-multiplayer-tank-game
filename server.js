@@ -120,30 +120,32 @@ function updateBullets() {
         let dy = player.y - bullet.y;
         let distance = Math.sqrt(dx * dx + dy * dy);
 
-        // Calculate damage based on the attacker's level
-        const attacker = players.get(bullet.playerId);
-        const damage = attacker.level * 10;
+        if (distance < 40) {
+          // Calculate damage based on the attacker's level
+          const attacker = players.get(bullet.playerId);
+          const damage = attacker.level * 10;
 
-        player.health -= damage;
-        bullets.delete(bulletId);
-        console.log(
-          `(Bullet hit) Attacker: ${attacker.id}, Victim: ID: ${player.id}, Health Left: ${player.health}`
-        );
-
-        if (player.health <= 0) {
-          // Level up player, keep track of kills
-          attacker.kills++;
-          attacker.level++;
-          attacker.health+=40;
-
+          player.health -= damage;
+          bullets.delete(bulletId);
           console.log(
-            `(Player killed) Attacker: ID: ${attacker.id}, Kills: ${attacker.kills}, Level: ${attacker.level}`
+            `(Bullet hit) Attacker: ${attacker.id}, Victim: ID: ${player.id}, Health Left: ${player.health}`
           );
-          sendLevelUp(attacker.id, attacker.level);
 
-          // Remove destroyed player
-          sendDestroyed(playerId);
-          players.delete(playerId);
+          if (player.health <= 0) {
+            // Level up player, keep track of kills
+            attacker.kills++;
+            attacker.level++;
+            attacker.health+=40;
+
+            console.log(
+              `(Player killed) Attacker: ID: ${attacker.id}, Kills: ${attacker.kills}, Level: ${attacker.level}`
+            );
+            sendLevelUp(attacker.id, attacker.level);
+
+            // Remove destroyed player
+            sendDestroyed(playerId);
+            players.delete(playerId);
+          }
         }
       }
     });

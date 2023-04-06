@@ -11,9 +11,11 @@
 <body>
   <div class="popup" id="popup">
     <div class="popup-content">
-      <h2>Welcome to the Tank Game</h2>
-      <img src="favicon.png" width="64" height="64" />
-      
+      <h2>Welcome to the <a href="https://github.com/JoshCap20/websocket-multiplayer-tank-game">Tank Game</a></h2>
+      <sub>Created by Josh Caponigro</sub>
+      <br>
+      <img src="favicon.png" width="90" height="90" />
+
       <p>Select your tank and start playing!</p>
       <p>Use the arrow keys to move your tank and the space bar to shoot.</p>
       <form id="tankTypeForm">
@@ -24,8 +26,56 @@
           <option value="heavy">Heavy</option>
           <option value="super-heavy">Super Heavy</option>
         </select>
+        <div class="popup" id="popupInfo" style="display: none;">
+          <span class="close-icon" onclick="document.getElementById('popupInfo').style.display = 'none';">&times;</span>
+          <div class="popup-content">
+            <h2>Types of Tanks:</h2>
+            <strong>Light Tank:</strong>
+            <pre>A fast and agile tank with a quick-firing single-barrel gun.
+
+Base Speed: 8
+Base Cooldown (time between shots): 250ms
+Base Damage: 5 (each bullet does 5 damage)</pre>
+            <strong>Medium Tank:</strong>
+            <pre>A well-balanced tank with a double-barrel gun.
+
+Base Speed: 4
+Base Cooldown: 500ms
+Base Damage: 10 (each bullet does 5 damage, 2 bullets per shot)</pre>
+
+            <strong>Heavy Tank:</strong>
+            <pre>A slow, heavily-armored tank with a powerful four-barrel gun.
+
+Base Speed: 2
+Base Cooldown: 800ms
+Base Damage: 20 (each bullet does 5 damage, 4 bullets per shot)</pre>
+
+            <strong>Super-Heavy Tank:</strong>
+            <pre>An extremely slow tank with a devastating six-barrel gun.
+
+Base Speed: 0.5
+Base Cooldown: 1200ms
+Base Damage: 30 (each bullet does 5 damage, 6 bullets per shot)</pre>
+
+            <p>
+              As you level up in the game, your tank's capabilities will improve. Leveling up affects the following
+              attributes:
+            </p>
+            <strong>Damage:</strong> Each level adds 1 additional bullet to your tank's shot, increasing the total
+            damage dealt per shot.
+            <strong>Speed:</strong> Your tank's speed increases with each level, allowing you to move more quickly
+            around the battlefield.
+            <strong>Turn Speed:</strong> The rotation speed of your tank increases with each level, enabling
+            faster response to enemy threats.
+            <br>
+            <button onclick="document.getElementById('popupInfo').style.display = 'none'; " type="button"
+              id="closeInfoButton">Close</button>
+          </div>
+        </div>
         <br>
         <button type="submit">Start Game</button>
+        <button onclick="document.getElementById('popupInfo').style.display = 'block'; " type="button"
+          id="infoButton">?</button>
       </form>
     </div>
   </div>

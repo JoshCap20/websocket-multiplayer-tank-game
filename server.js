@@ -8,7 +8,7 @@ let players = new Map();
 let bullets = new Map();
 let obstacles = generateRandomObstacles(10); // Generate 10 random obstacles
 
-DAMAGE_DISTANCE = 20;
+DAMAGE_DISTANCE = 45;
 
 server.on("connection", (socket) => {
   let playerId = createPlayerId();
@@ -121,7 +121,7 @@ function updateBullets() {
       }
     });
 
-    if (bullet.x < 0 || bullet.x > 800 || bullet.y < 0 || bullet.y > 600) {
+    if (bullet.x < 0 || bullet.x > mapHeight || bullet.y < 0 || bullet.y > mapWidth) {
       bullets.delete(bulletId);
     }
   });

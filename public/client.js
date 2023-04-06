@@ -162,7 +162,7 @@ function draw() {
   ctx.translate(-offsetX, -offsetY);
   drawBorder(offsetX, offsetY);
   players.forEach((player) => {
-    drawTank(player.x, player.y, player.rotation);
+    drawTank(player.x, player.y, player.rotation, player.level);
     drawHealthBar(player);
   });
 
@@ -177,14 +177,14 @@ function draw() {
   ctx.restore();
 }
 
-function drawTank(x, y, rotation) {
+function drawTank(x, y, rotation, level) {
   ctx.save();
   ctx.translate(x, y);
   ctx.rotate(rotation);
 
   // Draw the body of the tank
   ctx.fillStyle = "green";
-  ctx.fillRect(-20, -10, 40, 20);
+  ctx.fillRect(-20, -10, 40 + (level*5), 20 + (level*5));
 
   // Draw the gun of the tank
   ctx.fillStyle = "gray";
@@ -301,8 +301,8 @@ function updateHealth(health) {
 }
 
 window.addEventListener('resize', function() {
-  canvas.width = window.innerWidth - 10;
-  canvas.height = window.innerHeight - 15;
+  canvas.width = window.innerWidth - 25;
+  canvas.height = window.innerHeight - 25;
 
   viewportWidth = canvas.width;
   viewportHeight = canvas.height;

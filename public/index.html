@@ -4,10 +4,44 @@
   <title>Multiplayer Tank Game</title>
   <style>
     canvas { display: block; margin: 0 auto; }
+    .stats-bar {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      justify-content: center;
+      padding: 10px;
+      opacity: 0.5;
+      font-family: Arial, sans-serif;
+      color: #0c0606;
+      background-color: #ffffff;
+      border: 2px solid #0c0606;
+      border-radius: 5px;
+    }
+    .stats-item {
+      margin: 0 10px;
+    }
+    .stats-label {
+      font-weight: bold;
+    }
+    .stats-value {
+      margin-top: 5px;
+      font-size: 24px;
+    }
   </style>
 </head>
 <body>
-  <h5>Level: <div id="level">1</div></h5>
+  <div class="stats-bar">
+    <div class="stats-item">
+      <div class="stats-label">Level</div>
+      <div id="level" class="stats-value">1</div>
+    </div>
+    <div class="stats-item">
+      <div class="stats-label">Kills</div>
+      <div id="kills" class="stats-value">0</div>
+    </div>
+  </div>
   <canvas id="gameCanvas" width="800" height="600"></canvas>
   <script src="client.js"></script>
 </body>

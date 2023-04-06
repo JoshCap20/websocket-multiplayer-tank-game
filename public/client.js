@@ -2,11 +2,16 @@ const socket = new WebSocket("ws://localhost:8080");
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
+let mapWidth, mapHeight;
+
 let players = [];
 let bullets = [];
 let obstacles = [];
 
 let __health = 100;
+
+const viewportWidth = 800;
+const viewportHeight = 600;
 
 // Tank model
 class Tank {
@@ -131,8 +136,8 @@ socket.onmessage = (event) => {
       localTank.id = data.playerId;
       break;
     case "mapSize":
-      canvas.width = data.width;
-      canvas.height = data.height;
+      mapWidth = data.width;
+      mapHeight = data.height;
   }
 };
 
@@ -151,7 +156,16 @@ function update() {
 }
 
 function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, viewportWidth, viewportHeight);
+
+  const currentPlayer = players.find((player) => player.id === localTank.id);
+  if (!currentPlayer) return;
+
+  const offsetX = Math.min(Math.max(currentPlayer.x - viewportWidth / 2, 0), mapWidth - viewportWidth);
+  const offsetY = Math.min(Math.max(currentPlayer.y - viewportHeight / 2, 0), mapHeight - viewportHeight);
+
+  ctx.save();
+  ctx.translate(-offsetX, -offsetY);
 
   players.forEach((player) => {
     drawTank(player.x, player.y, player.rotation);
@@ -165,6 +179,8 @@ function draw() {
   obstacles.forEach((obstacle) => {
     drawObstacle(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
   });
+
+  ctx.restore();
 }
 
 function drawTank(x, y, rotation) {

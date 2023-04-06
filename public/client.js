@@ -402,3 +402,65 @@ socket.onclose = (event) => {
     displayErrorMessage("WebSocket connection closed unexpectedly");
   }
 };
+
+// for mobile users bc i am so inclusive
+
+const joystickContainer = document.getElementById('joystickContainer');
+const joystick = document.getElementById('joystick');
+const fireButton = document.getElementById('fireButton');
+
+let touchStartX = 0;
+let touchStartY = 0;
+let isTouching = false;
+
+joystickContainer.addEventListener('touchstart', (event) => {
+    event.preventDefault();
+    isTouching = true;
+    touchStartX = event.touches[0].clientX;
+    touchStartY = event.touches[0].clientY;
+});
+
+joystickContainer.addEventListener("touchmove", (event) => {
+  event.preventDefault();
+  if (isTouching) {
+    const deltaX = event.touches[0].clientX - touchStartX;
+    const deltaY = event.touches[0].clientY - touchStartY;
+
+    // Move the joystick based on touch position
+    joystick.style.transform = `translate(${deltaX - 50 / 2}px, ${
+      deltaY - 50 / 2
+    }px)`;
+
+    // Calculate direction vector and normalize it
+    const directionX = deltaX / Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    const directionY = deltaY / Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+    // Calculate the angle in radians and convert it to degrees
+    const angle = Math.atan2(directionY, directionX) * (180 / Math.PI);
+
+    // Call the appropriate functions based on the angle
+    if (angle >= -45 && angle <= 45) {
+      localTank.rotateRight();
+    } else if (angle > 45 && angle < 135) {
+      localTank.moveBackward();
+    } else if (angle >= 135 || angle <= -135) {
+      localTank.rotateLeft();
+    } else if (angle < -45 && angle > -135) {
+      localTank.moveForward();
+    }
+  }
+});
+
+joystickContainer.addEventListener('touchend', () => {
+    isTouching = false;
+    joystick.style.transform = 'translate(-50%, -50%)'; // Reset the joystick position
+});
+
+fireButton.addEventListener('touchstart', (event) => {
+    event.preventDefault();
+    localTank.fire();
+});
+
+fireButton.addEventListener('touchend', (event) => {
+    event.preventDefault();
+});

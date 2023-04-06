@@ -7,11 +7,12 @@ A simple multiplayer tank game built using Node.JS, JavaScript, Canvas, and WebS
 - Firing bullets with damage and cooldown
 - Health bars and tank destruction
 - Leveling up system
+- Randomly generated maps with obstacles and spawning
 
 ### To Be Added:
-- Obstacles
 - Tank upgrade selections
 - Tank types (light, medium, heavy)
+- Out of bounds warning
 
 ## Installation
 1. Clone the repository:

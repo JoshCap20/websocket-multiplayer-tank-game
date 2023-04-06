@@ -23,6 +23,12 @@ class Tank {
         this.y += Math.sin(this.rotation) * 3 * this.level;
     }
 
+    moveBackward() {
+        // Half speed when moving backwards (no level multiplier)
+        this.x -= Math.cos(this.rotation) * 1.5;
+        this.y -= Math.sin(this.rotation) * 1.5;
+    }
+
     rotateLeft() {
         this.rotation -= 0.05;
     }
@@ -64,6 +70,9 @@ document.addEventListener('keydown', (e) => {
             break;
         case 'ArrowRight':
             localTank.rotateRight();
+            break;
+        case 'ArrowDown':
+            localTank.moveBackward();
             break;
         case ' ':
             localTank.fire();

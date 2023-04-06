@@ -6,7 +6,7 @@ const mapWidth = Math.random() * 1000 + 500;
 
 let players = new Map();
 let bullets = new Map();
-let obstacles = generateRandomObstacles(10); // Generate 10 random obstacles
+let obstacles = generateRandomObstacles(); 
 
 DAMAGE_DISTANCE = 45;
 
@@ -152,12 +152,15 @@ function sendDestroyed(playerId) {
   });
 }
 
-function generateRandomObstacles(numObstacles) {
+function generateRandomObstacles() {
   const obstacles = [];
 
+  const obstacleDensity = 0.00001; // Adjust this value to control the number of obstacles per square unit
+  const numObstacles = Math.floor(obstacleDensity * mapWidth * mapHeight);
+
   for (let i = 0; i < numObstacles; i++) {
-    const x = Math.random() * (mapHeight - 100);
-    const y = Math.random() * (mapWidth - 100);
+    const x = Math.random() * (mapWidth - 100);
+    const y = Math.random() * (mapHeight - 100);
     const width = 50 + Math.random() * 100;
     const height = 50 + Math.random() * 100;
 

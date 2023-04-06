@@ -12,17 +12,18 @@ DAMAGE_DISTANCE = 45;
 
 server.on("connection", (socket) => {
   let playerId = createPlayerId();
+  let spawnPoint = getRandomSpawnPoint();
   players.set(playerId, {
     id: playerId,
-    x: 0,
-    y: 0,
+    x: spawnPoint.x,
+    y: spawnPoint.y,
     rotation: 0,
     health: 100,
     level: 1,
     kills: 0,
   });
 
-  socket.send(JSON.stringify({ type: "playerId", playerId }));
+  socket.send(JSON.stringify({ type: "playerId", playerId, startX: spawnPoint.x, startY: spawnPoint.y }));
   socket.send(JSON.stringify({ type: "mapSize", height: mapHeight, width: mapWidth }));
 
   socket.on("message", (message) => {
@@ -168,4 +169,34 @@ function generateRandomObstacles() {
   }
 
   return obstacles;
+}
+
+function collidesWithObstacle(x, y, width, height) {
+  for (let obstacle of obstacles) {
+    if (
+      x < obstacle.x + obstacle.width &&
+      x + width > obstacle.x &&
+      y < obstacle.y + obstacle.height &&
+      y + height > obstacle.y
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function getRandomSpawnPoint() {
+  let x, y;
+  let validSpawn = false;
+
+  while (!validSpawn) {
+    x = Math.random() * (mapWidth - 40) + 20;
+    y = Math.random() * (mapHeight - 40) + 20;
+
+    if (!collidesWithObstacle(x, y, 40, 20)) {
+      validSpawn = true;
+    }
+  }
+
+  return { x, y };
 }

@@ -8,6 +8,8 @@ let players = [];
 let bullets = [];
 let obstacles = [];
 
+let localTank = null;
+
 let __health = 100;
 
 const viewportWidth = 800;
@@ -77,9 +79,6 @@ class Tank {
   }
 }
 
-// Local tank
-const localTank = new Tank(canvas.width / 2, canvas.height / 2, 0);
-
 // Input handling
 document.addEventListener("keydown", (e) => {
   switch (e.key) {
@@ -121,6 +120,7 @@ socket.onmessage = (event) => {
       }
       break;
     case "playerId":
+      localTank = new Tank(data.startX, data.startY, 0);
       localTank.id = data.playerId;
       break;
     case "mapSize":
@@ -247,8 +247,11 @@ function collidesWithObstacle(x, y, width, height) {
 
 
 function gameLoop() {
-  update();
-  draw();
+  if (localTank != null) {
+    if (localTank.died) return;
+    update();
+    draw();
+  }
   requestAnimationFrame(gameLoop);
 }
 

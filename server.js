@@ -10,6 +10,8 @@ server.on('connection', (socket) => {
     let playerId = createPlayerId();
     players.set(playerId, { id: playerId, x: 0, y: 0, rotation: 0, health: 100, level: 1, kills: 0 });
 
+    socket.send(JSON.stringify({ type: 'playerId', playerId }));
+
     socket.on('message', (message) => {
         let data = JSON.parse(message);
         switch (data.type) {
@@ -55,8 +57,8 @@ function addBullet(playerId, data) {
 
 function updateBullets() {
     bullets.forEach((bullet, bulletId) => {
-        bullet.x += Math.cos(bullet.rotation) * 10;
-        bullet.y += Math.sin(bullet.rotation) * 10;
+        bullet.x += Math.cos(bullet.rotation) * 3;
+        bullet.y += Math.sin(bullet.rotation) * 3;
 
         players.forEach((player, playerId) => {
             if (playerId !== bullet.playerId) {
@@ -74,15 +76,15 @@ function updateBullets() {
                     console.log(`(Bullet hit) Attacker: ${attacker.id}, Victim: ID: ${player.id}, Health Left: ${player.health}`);
 
                     if (player.health <= 0) {
-                        // Increment the attacker's kills
+                        // Level up player, keep track of kills
                         attacker.kills++;
-
-                        // Level up the attacker after a kill
                         attacker.level++;
+
                         console.log(`(Player killed) Attacker: ID: ${attacker.id}, Kills: ${attacker.kills}, Level: ${attacker.level}`);
                         sendLevelUp(attacker.id, attacker.level);
                         
                         // Remove destroyed player
+                        sendDestroyed(playerId);
                         players.delete(playerId);
                     }
                 }
@@ -104,6 +106,18 @@ function sendLevelUp(attackerId, attackerLevel) {
     server.clients.forEach((client) => {
         if (client.readyState === WebSocket.OPEN) {
             client.send(JSON.stringify(levelUpData));
+        }
+    });
+}
+
+function sendDestroyed(playerId) {
+    let destroyedData = {
+        type: 'destroyed',
+        playerId: playerId,
+    };
+    server.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify(destroyedData));
         }
     });
 }

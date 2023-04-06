@@ -1,5 +1,14 @@
 {
+  "name": "websocket-world-of-tanks",
+  "version": "1.0.0",
+  "description": "A simple multiplayer tank game using WebSockets",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "serve": "http-server"
+  },
   "dependencies": {
-    "ws": "^8.13.0"
+    "ws": "^8.6.0",
+    "http-server": "^14.0.0"
   }
 }

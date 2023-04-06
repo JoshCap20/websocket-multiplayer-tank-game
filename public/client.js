@@ -8,16 +8,19 @@ let bullets = [];
 // Tank model
 class Tank {
     constructor(x, y, rotation) {
+        this.id = 0;
         this.x = x;
         this.y = y;
         this.rotation = rotation;
         this.lastFired = 0;
         this.cooldown = 500; // Cooldown time in milliseconds
+        this.level = 1;
     }
 
     moveForward() {
-        this.x += Math.cos(this.rotation) * 5;
-        this.y += Math.sin(this.rotation) * 5;
+        // Update the speed multiplier based on the player's level
+        this.x += Math.cos(this.rotation) * 3 * this.level;
+        this.y += Math.sin(this.rotation) * 3 * this.level;
     }
 
     rotateLeft() {
@@ -39,8 +42,8 @@ class Tank {
         this.lastFired = Date.now();
         let data = {
             type: 'fire',
-            x: this.x + Math.cos(this.rotation) * 35,
-            y: this.y + Math.sin(this.rotation) * 35,
+            x: this.x + Math.cos(this.rotation),
+            y: this.y + Math.sin(this.rotation),
             rotation: this.rotation,
         };
         socket.send(JSON.stringify(data));
@@ -76,7 +79,17 @@ socket.onmessage = (event) => {
             bullets = data.bullets;
             break;
         case 'destroyed':
-            displayDestroyedMessage();
+            if (data.playerId === localTank.id) {
+                displayDestroyedMessage();
+            }
+            break;
+        case 'levelUp':
+            if (data.playerId === localTank.id) {
+                levelUp();
+            }
+            break;
+        case 'playerId':
+            localTank.id = data.playerId;
             break;
     }
 };
@@ -173,3 +186,9 @@ function displayDestroyedMessage() {
     }, 3000);
 }
        
+function levelUp() {
+    localTank.level++;
+
+    const levelElement = document.getElementById('level');
+    levelElement.innerText = localTank.level;
+}

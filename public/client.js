@@ -1,5 +1,5 @@
 const socket = new WebSocket("ws://localhost:8080");
-const canvas = document.getElementById("gameCanvas");
+let canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
 let mapWidth, mapHeight;
@@ -12,8 +12,13 @@ let localTank = null;
 
 let __health = 100;
 
-const viewportWidth = 800;
-const viewportHeight = 600;
+canvas.width = document.body.clientWidth;
+canvas.height = document.body.clientHeight;
+
+const viewportWidth = document.body.clientWidth;
+const viewportHeight = document.body.clientHeight;
+
+
 
 // Tank model
 class Tank {
@@ -29,8 +34,8 @@ class Tank {
   }
 
   moveForward() {
-    const newX = this.x + Math.cos(this.rotation) * 3 * this.level;
-    const newY = this.y + Math.sin(this.rotation) * 3 * this.level;
+    const newX = this.x + Math.cos(this.rotation) * 4 * this.level;
+    const newY = this.y + Math.sin(this.rotation) * 4 * this.level;
 
     if (!collidesWithObstacle(newX, newY, 40, 20) &&
         newX >= 20 && newX <= mapWidth - 20 &&
@@ -126,6 +131,7 @@ socket.onmessage = (event) => {
     case "mapSize":
       mapWidth = data.width;
       mapHeight = data.height;
+      break;
   }
 };
 
@@ -154,9 +160,7 @@ function draw() {
 
   ctx.save();
   ctx.translate(-offsetX, -offsetY);
-
-  drawOutOfBounds(offsetX, offsetY);
-
+  drawBorder(offsetX, offsetY);
   players.forEach((player) => {
     drawTank(player.x, player.y, player.rotation);
     drawHealthBar(player);
@@ -221,16 +225,6 @@ function drawHealthBar(player) {
   }
 }
 
-function drawOutOfBounds(offsetX, offsetY) {
-  ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-
-  // Draw top, bottom, left, and right out-of-bounds areas
-  ctx.fillRect(offsetX, offsetY, mapWidth, Math.max(0, viewportHeight / 2 - mapHeight / 2));
-  ctx.fillRect(offsetX, offsetY + mapHeight - Math.max(0, viewportHeight / 2 - mapHeight / 2), mapWidth, Math.max(0, viewportHeight / 2 - mapHeight / 2));
-  ctx.fillRect(offsetX, offsetY, Math.max(0, viewportWidth / 2 - mapWidth / 2), mapHeight);
-  ctx.fillRect(offsetX + mapWidth - Math.max(0, viewportWidth / 2 - mapWidth / 2), offsetY, Math.max(0, viewportWidth / 2 - mapWidth / 2), mapHeight);
-}
-
 function collidesWithObstacle(x, y, width, height) {
   for (const obstacle of obstacles) {
     if (
@@ -244,6 +238,25 @@ function collidesWithObstacle(x, y, width, height) {
   }
   return false;
 }
+
+function drawBorder(offsetX, offsetY) {
+  ctx.save();
+
+  // Limit the drawing area
+  ctx.beginPath();
+  ctx.rect(offsetX, offsetY, viewportWidth, viewportHeight);
+  ctx.clip();
+
+  // Draw the borders
+  ctx.fillStyle = "black";
+  ctx.fillRect(offsetX, offsetY, viewportWidth, 5); // Top border
+  ctx.fillRect(offsetX, offsetY, 5, viewportHeight); // Left border
+  ctx.fillRect(offsetX, offsetY + viewportHeight - 5, viewportWidth, 5); // Bottom border
+  ctx.fillRect(offsetX + viewportWidth - 5, offsetY, 5, viewportHeight); // Right border
+
+  ctx.restore();
+}
+
 
 
 function gameLoop() {

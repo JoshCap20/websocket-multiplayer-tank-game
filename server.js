@@ -3,6 +3,7 @@ const server = new WebSocket.Server({ port: 8080 });
 
 let players = new Map();
 let bullets = new Map();
+let obstacles = generateRandomObstacles(10); // Generate 10 random obstacles
 
 DAMAGE_DISTANCE = 20;
 
@@ -33,7 +34,7 @@ server.on('connection', (socket) => {
 
     setInterval(() => {
         updateBullets();
-        socket.send(JSON.stringify({ type: 'update', players: Array.from(players.values()), bullets: Array.from(bullets.values()) }));
+        socket.send(JSON.stringify({ type: 'update', players: Array.from(players.values()), bullets: Array.from(bullets.values()), obstacles: obstacles}));
     }, 1000 / 60);
 });
 
@@ -121,3 +122,19 @@ function sendDestroyed(playerId) {
         }
     });
 }
+
+function generateRandomObstacles(numObstacles) {
+    const obstacles = [];
+  
+    for (let i = 0; i < numObstacles; i++) {
+      const x = Math.random() * (800 - 100);
+      const y = Math.random() * (600 - 100);
+      const width = 50 + Math.random() * 100;
+      const height = 50 + Math.random() * 100;
+  
+      obstacles.push({ x, y, width, height });
+    }
+  
+    return obstacles;
+  }
+  

@@ -1,6 +1,8 @@
 # Multiplayer Tank Game
 A simple, fast-paced, multiplayer tank game built using Node.js and JavaScript that runs in your browser. The game employs the HTML5 Canvas API for smooth and responsive rendering of 2D graphics and utilizes WebSockets to establish real-time communication between clients and the server. 
 
+<img width="746" alt="Screenshot 2023-04-06 at 5 17 51 AM" src="https://user-images.githubusercontent.com/97563979/230335392-631934b2-366a-4377-b1e5-f56a3a3a0a7d.png">
+
 ## Features
 - Real-time multiplayer gameplay
 - Tank movement and rotation

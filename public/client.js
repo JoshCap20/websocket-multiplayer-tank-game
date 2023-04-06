@@ -27,38 +27,26 @@ class Tank {
   }
 
   moveForward() {
-    // Update the speed multiplier based on the player's level
-    this.x += Math.cos(this.rotation) * 3 * this.level;
-    this.y += Math.sin(this.rotation) * 3 * this.level;
-    if (this.x <= 10) {
-      this.x = 10;
-    }
-    if (this.x >= canvas.width - 10) {
-      this.x = canvas.width - 10;
-    }
-    if (this.y <= 10) {
-      this.y = 10;
-    }
-    if (this.y >= canvas.height - 10) {
-      this.y = canvas.height - 10;
+    const newX = this.x + Math.cos(this.rotation) * 3 * this.level;
+    const newY = this.y + Math.sin(this.rotation) * 3 * this.level;
+
+    if (!collidesWithObstacle(newX, newY, 40, 20) &&
+        newX >= 20 && newX <= mapWidth - 20 &&
+        newY >= 20 && newY <= mapHeight - 20) {
+      this.x = newX;
+      this.y = newY;
     }
   }
 
   moveBackward() {
-    // Half speed when moving backwards (no level multiplier)
-    this.x -= Math.cos(this.rotation) * 1.5;
-    this.y -= Math.sin(this.rotation) * 1.5;
-    if (this.x <= 10) {
-      this.x = 10;
-    }
-    if (this.x >= canvas.width - 10) {
-      this.x = canvas.width - 10;
-    }
-    if (this.y <= 10) {
-      this.y = 10;
-    }
-    if (this.y >= canvas.height - 10) {
-      this.y = canvas.height - 10;
+    const newX = this.x - Math.cos(this.rotation) * 1.5;
+    const newY = this.y - Math.sin(this.rotation) * 1.5;
+
+    if (!collidesWithObstacle(newX, newY, 40, 20) &&
+        newX >= 20 && newX <= mapWidth - 20 &&
+        newY >= 20 && newY <= mapHeight - 20) {
+      this.x = newX;
+      this.y = newY;
     }
   }
 
@@ -167,6 +155,8 @@ function draw() {
   ctx.save();
   ctx.translate(-offsetX, -offsetY);
 
+  drawOutOfBounds(offsetX, offsetY);
+
   players.forEach((player) => {
     drawTank(player.x, player.y, player.rotation);
     drawHealthBar(player);
@@ -230,6 +220,31 @@ function drawHealthBar(player) {
     updateHealth(player.health);
   }
 }
+
+function drawOutOfBounds(offsetX, offsetY) {
+  ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+
+  // Draw top, bottom, left, and right out-of-bounds areas
+  ctx.fillRect(offsetX, offsetY, mapWidth, Math.max(0, viewportHeight / 2 - mapHeight / 2));
+  ctx.fillRect(offsetX, offsetY + mapHeight - Math.max(0, viewportHeight / 2 - mapHeight / 2), mapWidth, Math.max(0, viewportHeight / 2 - mapHeight / 2));
+  ctx.fillRect(offsetX, offsetY, Math.max(0, viewportWidth / 2 - mapWidth / 2), mapHeight);
+  ctx.fillRect(offsetX + mapWidth - Math.max(0, viewportWidth / 2 - mapWidth / 2), offsetY, Math.max(0, viewportWidth / 2 - mapWidth / 2), mapHeight);
+}
+
+function collidesWithObstacle(x, y, width, height) {
+  for (const obstacle of obstacles) {
+    if (
+      x + width / 2 > obstacle.x &&
+      x - width / 2 < obstacle.x + obstacle.width &&
+      y + height / 2 > obstacle.y &&
+      y - height / 2 < obstacle.y + obstacle.height
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
 
 function gameLoop() {
   update();

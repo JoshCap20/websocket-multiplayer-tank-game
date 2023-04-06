@@ -36,8 +36,6 @@ let players = new Map();
 let bullets = new Map();
 let obstacles = generateRandomObstacles(); 
 
-DAMAGE_DISTANCE = 45;
-
 wss.on("connection", (ws) => {
   let playerId = createPlayerId();
   let spawnPoint = getRandomSpawnPoint();
@@ -122,32 +120,30 @@ function updateBullets() {
         let dy = player.y - bullet.y;
         let distance = Math.sqrt(dx * dx + dy * dy);
 
-        if (distance < DAMAGE_DISTANCE) {
-          // Calculate damage based on the attacker's level
-          const attacker = players.get(bullet.playerId);
-          const damage = attacker.level * 10;
+        // Calculate damage based on the attacker's level
+        const attacker = players.get(bullet.playerId);
+        const damage = attacker.level * 10;
 
-          player.health -= damage;
-          bullets.delete(bulletId);
+        player.health -= damage;
+        bullets.delete(bulletId);
+        console.log(
+          `(Bullet hit) Attacker: ${attacker.id}, Victim: ID: ${player.id}, Health Left: ${player.health}`
+        );
+
+        if (player.health <= 0) {
+          // Level up player, keep track of kills
+          attacker.kills++;
+          attacker.level++;
+          attacker.health+=40;
+
           console.log(
-            `(Bullet hit) Attacker: ${attacker.id}, Victim: ID: ${player.id}, Health Left: ${player.health}`
+            `(Player killed) Attacker: ID: ${attacker.id}, Kills: ${attacker.kills}, Level: ${attacker.level}`
           );
+          sendLevelUp(attacker.id, attacker.level);
 
-          if (player.health <= 0) {
-            // Level up player, keep track of kills
-            attacker.kills++;
-            attacker.level++;
-            attacker.health+=40;
-
-            console.log(
-              `(Player killed) Attacker: ID: ${attacker.id}, Kills: ${attacker.kills}, Level: ${attacker.level}`
-            );
-            sendLevelUp(attacker.id, attacker.level);
-
-            // Remove destroyed player
-            sendDestroyed(playerId);
-            players.delete(playerId);
-          }
+          // Remove destroyed player
+          sendDestroyed(playerId);
+          players.delete(playerId);
         }
       }
     });

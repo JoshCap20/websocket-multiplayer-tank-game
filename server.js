@@ -4,9 +4,11 @@ const server = new WebSocket.Server({ port: 8080 });
 let players = new Map();
 let bullets = new Map();
 
+DAMAGE_DISTANCE = 20;
+
 server.on('connection', (socket) => {
     let playerId = createPlayerId();
-    players.set(playerId, { id: playerId, x: 0, y: 0, rotation: 0, health: 100 });
+    players.set(playerId, { id: playerId, x: 0, y: 0, rotation: 0, health: 100, level: 1, kills: 0 });
 
     socket.on('message', (message) => {
         let data = JSON.parse(message);
@@ -62,19 +64,46 @@ function updateBullets() {
                 let dy = player.y - bullet.y;
                 let distance = Math.sqrt(dx * dx + dy * dy);
 
-                if (distance < 20) {
-                    player.health -= 15;
-                    bullets.delete(bulletId);
-                }
+                if (distance < DAMAGE_DISTANCE) {
+                    // Calculate damage based on the attacker's level
+                    const attacker = players.get(bullet.playerId);
+                    const damage = attacker.level * 10;
 
-                if (player.health <= 0) {
-                    players.delete(playerId);
+                    player.health -= damage;
+                    bullets.delete(bulletId);
+                    console.log(`(Bullet hit) Attacker: ${attacker.id}, Victim: ID: ${player.id}, Health Left: ${player.health}`);
+
+                    if (player.health <= 0) {
+                        // Increment the attacker's kills
+                        attacker.kills++;
+
+                        // Level up the attacker after a kill
+                        attacker.level++;
+                        console.log(`(Player killed) Attacker: ID: ${attacker.id}, Kills: ${attacker.kills}, Level: ${attacker.level}`);
+                        sendLevelUp(attacker.id, attacker.level);
+                        
+                        // Remove destroyed player
+                        players.delete(playerId);
+                    }
                 }
             }
         });
 
         if (bullet.x < 0 || bullet.x > 800 || bullet.y < 0 || bullet.y > 600) {
             bullets.delete(bulletId);
+        }
+    });
+}
+
+function sendLevelUp(attackerId, attackerLevel) {
+    let levelUpData = {
+        type: 'levelUp',
+        playerId: attackerId,
+        level: attackerLevel,
+    };
+    server.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify(levelUpData));
         }
     });
 }

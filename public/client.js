@@ -297,21 +297,6 @@ function gameLoop() {
   requestAnimationFrame(gameLoop);
 }
 
-function displayDestroyedMessage() {
-  localTank.died = true;
-  const messageElement = document.createElement("div");
-  messageElement.style.position = "fixed";
-  messageElement.style.top = "50%";
-  messageElement.style.left = "50%";
-  messageElement.style.transform = "translate(-50%, -50%)";
-  messageElement.style.fontSize = "24px";
-  messageElement.style.fontWeight = "bold";
-  messageElement.style.color = "red";
-  messageElement.innerText = "Your tank was destroyed!";
-
-  document.body.appendChild(messageElement);
-}
-
 function levelUp() {
   localTank.level++;
 
@@ -336,7 +321,6 @@ window.addEventListener('resize', function() {
   viewportWidth = canvas.width;
   viewportHeight = canvas.height;
 });
-
 
 function setTankAttributes(tankType) {
   if (localTank == null) return;
@@ -373,3 +357,37 @@ document.getElementById("tankTypeForm").addEventListener("submit", (event) => {
   document.getElementById("popup").style.display = "none";
   canvas.style.display = "block";
 });
+
+function displayDestroyedMessage() {
+  localTank.died = true;
+  const messageElement = document.createElement("div");
+  messageElement.style.position = "fixed";
+  messageElement.style.top = "50%";
+  messageElement.style.left = "50%";
+  messageElement.style.transform = "translate(-50%, -50%)";
+  messageElement.style.fontSize = "24px";
+  messageElement.style.fontWeight = "bold";
+  messageElement.style.color = "red";
+  messageElement.innerText = "Your tank was destroyed!";
+
+  document.body.appendChild(messageElement);
+}
+
+function displayErrorMessage(message) {
+  const messageElement = document.createElement("div");
+  messageElement.style.position = "fixed";
+  messageElement.style.top = "50%";
+  messageElement.style.left = "50%";
+  messageElement.style.transform = "translate(-50%, -50%)";
+  messageElement.style.fontSize = "24px";
+  messageElement.style.fontWeight = "bold";
+  messageElement.style.color = "red";
+  messageElement.innerText = message;
+
+  document.body.appendChild(messageElement);
+}
+
+socket.onerror = (error) => {
+  console.error("WebSocket error:", error);
+  displayErrorMessage("An error occurred while connecting to the server. Please try again later.");
+};

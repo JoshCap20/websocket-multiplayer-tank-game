@@ -137,6 +137,7 @@ function updateBullets() {
             // Level up player, keep track of kills
             attacker.kills++;
             attacker.level++;
+            attacker.health+=40;
 
             console.log(
               `(Player killed) Attacker: ID: ${attacker.id}, Kills: ${attacker.kills}, Level: ${attacker.level}`

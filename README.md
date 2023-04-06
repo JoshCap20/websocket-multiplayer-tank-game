@@ -12,7 +12,6 @@ A simple, fast-paced, multiplayer tank game built using Node.js and JavaScript t
 ### To Be Added:
 - Tank upgrade selections
 - Tank types (light, medium, heavy)
-- Out of bounds warning
 
 ## Installation
 1. Clone the repository:
@@ -31,7 +30,9 @@ Start the WebSocket and HTTP server:
 
 
 ## Playing the game (Client)
-Open your browser and go to http://localhost:8080 to play the game (or whatever port the server is on).
+The server will give you the address that anyone on the same network can use to play with you, that is your IP address on the network + the port of the server.
+
+This game is configured to run on port 8080 by default.
 
 ## Controls
 - Arrow Up: Move forward

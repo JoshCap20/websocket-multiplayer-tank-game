@@ -5,10 +5,33 @@ const path = require("path");
 
 const app = express();
 
+app.set('port', 8080);
+
+const errorHandler = error => {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+  const address = server.address();
+  const bind = typeof address === 'string' ? 'pipe ' + address : 'port: 8080';
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges.');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use.');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+};
+
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
 
 const server = http.createServer(app);
+server.on('error', errorHandler);
 
 const wss = new WebSocket.Server({ server });
 
@@ -215,4 +238,5 @@ function getRandomSpawnPoint() {
 // Listen on port 8080 for both HTTP and WebSocket
 server.listen(8080, () => {
   console.log("Server listening on port 8080");
+  console.log("Open http://localhost:8080 in your browser to play")
 });

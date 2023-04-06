@@ -23,12 +23,36 @@ class Tank {
     // Update the speed multiplier based on the player's level
     this.x += Math.cos(this.rotation) * 3 * this.level;
     this.y += Math.sin(this.rotation) * 3 * this.level;
+    if (this.x <= 10) {
+      this.x = 10;
+    }
+    if (this.x >= canvas.width - 10) {
+      this.x = canvas.width - 10;
+    }
+    if (this.y <= 10) {
+      this.y = 10;
+    }
+    if (this.y >= canvas.height - 10) {
+      this.y = canvas.height - 10;
+    }
   }
 
   moveBackward() {
     // Half speed when moving backwards (no level multiplier)
     this.x -= Math.cos(this.rotation) * 1.5;
     this.y -= Math.sin(this.rotation) * 1.5;
+    if (this.x <= 10) {
+      this.x = 10;
+    }
+    if (this.x >= canvas.width - 10) {
+      this.x = canvas.width - 10;
+    }
+    if (this.y <= 10) {
+      this.y = 10;
+    }
+    if (this.y >= canvas.height - 10) {
+      this.y = canvas.height - 10;
+    }
   }
 
   rotateLeft() {

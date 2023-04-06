@@ -61,12 +61,10 @@ Base Damage: 30 (each bullet does 5 damage, 6 bullets per shot)</pre>
               As you level up in the game, your tank's capabilities will improve. Leveling up affects the following
               attributes:
             </p>
-            <strong>Damage:</strong> Each level adds 1 additional bullet to your tank's shot, increasing the total
-            damage dealt per shot.
+            <strong>Damage:</strong> Each level increases the damage of each bullet fired by your tank up to 20 damage a bullet (Min(5 + (level - 1) / 2, 20)).
             <strong>Speed:</strong> Your tank's speed increases with each level, allowing you to move more quickly
             around the battlefield.
-            <strong>Turn Speed:</strong> The rotation speed of your tank increases with each level, enabling
-            faster response to enemy threats.
+            <strong>Dual Barallels</strong> At level 3, your tank will gain a second barrel, allowing you to fire double the bullets per shot.
             <br>
             <button onclick="document.getElementById('popupInfo').style.display = 'none'; " type="button"
               id="closeInfoButton">Close</button>
@@ -99,7 +97,7 @@ Base Damage: 30 (each bullet does 5 damage, 6 bullets per shot)</pre>
     </div>
   </div>
   <canvas id="gameCanvas" width="800" height="600"></canvas>
-  
+
   <!-- Joystick Container -->
   <div id="joystickContainer" class="joystick-container">
     <div id="joystick" class="joystick"></div>

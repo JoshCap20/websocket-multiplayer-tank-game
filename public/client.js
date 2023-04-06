@@ -37,8 +37,10 @@ class Tank {
   }
 
   moveForward() {
-    const newX = this.x + Math.cos(this.rotation) * this.speed + (this.level - 1);
-    const newY = this.y + Math.sin(this.rotation) * this.speed + (this.level - 1);
+    const adjustedSpeed = this.speed + (this.level - 1);
+    const newX = this.x + Math.cos(this.rotation) * adjustedSpeed;
+    const newY = this.y + Math.sin(this.rotation) * adjustedSpeed;
+
 
     if (!collidesWithObstacle(newX, newY, 40, 20) &&
         newX >= 20 && newX <= mapWidth - 20 &&
@@ -49,8 +51,9 @@ class Tank {
   }
 
   moveBackward() {
-    const newX = this.x - Math.cos(this.rotation) * (this.speed / 2) + (this.level - 1);
-    const newY = this.y - Math.sin(this.rotation) * (this.speed / 2) + (this.level - 1);
+    const adjustedSpeed = (this.speed + (this.level - 1)) / 2;
+    const newX = this.x - Math.cos(this.rotation) * adjustedSpeed;
+    const newY = this.y - Math.sin(this.rotation) * adjustedSpeed;
 
     if (!collidesWithObstacle(newX, newY, 40, 20) &&
         newX >= 20 && newX <= mapWidth - 20 &&
@@ -348,14 +351,14 @@ function setTankAttributes(tankType) {
       localTank.speed = 4;
       break;
     case "heavy":
-      localTank.bullets = 3;
+      localTank.bullets = 4;
       localTank.speed = 2;
-      localTank.cooldown = 750;
+      localTank.cooldown = 800;
       break;
     case "super-heavy":
-      localTank.bullets = 4;
+      localTank.bullets = 6;
       localTank.speed = 0.5;
-      localTank.cooldown = 1000;
+      localTank.cooldown = 1200;
       break;
     default:
       localTank.speed = 4;

@@ -231,6 +231,8 @@ function getRandomSpawnPoint() {
 
 // Listen on port 8080 for both HTTP and WebSocket
 server.listen(8080, () => {
-  console.log("Server listening on port 8080");
-  console.log("Open http://localhost:8080 in your browser to play")
+  console.log("Server listening on port 8080, connect to play");
+  require('dns').lookup(require('os').hostname(), function (err, add, fam) {
+    console.log('Play with anyone on your network: ' + add + ':8080');
+  })
 });

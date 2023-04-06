@@ -1,4 +1,5 @@
-const socket = new WebSocket("ws://localhost:8080");
+const serverPort = location.port || 8080;
+const socket = new WebSocket(`ws://${location.hostname}:${serverPort}`);
 let canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
@@ -291,6 +292,9 @@ function drawBorder(offsetX, offsetY) {
 function gameLoop() {
   if (localTank != null) {
     if (localTank.died) return;
+    if (socket.readyState !== WebSocket.OPEN) {
+      return;
+    }
     update();
     draw();
   }
@@ -388,6 +392,13 @@ function displayErrorMessage(message) {
 }
 
 socket.onerror = (error) => {
-  console.error("WebSocket error:", error);
-  displayErrorMessage("An error occurred while connecting to the server. Please try again later.");
+  displayErrorMessage("WebSocket error: " + error.message);
+};
+
+socket.onclose = (event) => {
+  if (event.wasClean) {
+    displayErrorMessage("WebSocket connection closed");
+  } else {
+    displayErrorMessage("WebSocket connection closed unexpectedly");
+  }
 };

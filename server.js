@@ -5,8 +5,6 @@ const path = require("path");
 
 const app = express();
 
-app.set('port', 8080);
-
 const errorHandler = error => {
   if (error.syscall !== 'listen') {
     throw error;

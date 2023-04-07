@@ -342,9 +342,9 @@ function setTankAttributes(tankType) {
       localTank.cooldown = 800;
       break;
     case "super-heavy":
-      localTank.bullets = 6;
+      localTank.bullets = 25;
       localTank.speed = 0.5;
-      localTank.cooldown = 1200;
+      localTank.cooldown = 1400;
       break;
     default:
       localTank.speed = 4;

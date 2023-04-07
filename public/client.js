@@ -13,8 +13,8 @@ let localTank = null;
 
 let __health = 100;
 
-canvas.width = window.innerWidth - 25;
-canvas.height = window.innerHeight - 25;
+canvas.width = window.innerWidth - 30;
+canvas.height = window.innerHeight - 30;
 
 let viewportWidth = canvas.width;
 let viewportHeight = canvas.height;
@@ -164,7 +164,8 @@ function update() {
 }
 
 function draw() {
-  ctx.clearRect(0, 0, viewportWidth, viewportHeight);
+  ctx.fillStyle = "gray";
+  ctx.fillRect(0, 0, viewportWidth, viewportHeight);
 
   const currentPlayer = players.find((player) => player.id === localTank.id);
   if (!currentPlayer) return;
@@ -173,6 +174,7 @@ function draw() {
   const offsetY = Math.min(Math.max(currentPlayer.y - viewportHeight / 2, 0), mapHeight - viewportHeight);
 
   ctx.save();
+
   ctx.translate(-offsetX, -offsetY);
   drawBorder(offsetX, offsetY);
   players.forEach((player) => {
@@ -198,14 +200,10 @@ function drawTank(x, y, rotation, level) {
 
   // Draw the body of the tank
   ctx.fillStyle = "green";
-  ctx.fillRect(-20, -10, 40 + (level*5), 20);
+  ctx.fillRect(-20, -10, 40 + (level*3), 20);
 
   // Draw the gun of the tank
-  // normal fallback
-  ctx.fillStyle = "gray";
-  // ctx.fillRect(20, -3, 15 + (level*3), 6);
-
-  // testing level up things
+  ctx.fillStyle = "black";
   if (level >= 3) {
     ctx.fillRect(10, -7, 15 + (level*3), 6);
     ctx.fillRect(10, 0, 15 + (level*3), 6);
@@ -244,7 +242,7 @@ function drawHealthBar(player) {
   ctx.fillRect(x, y, healthWidth, height);
 
   // add text above with player.id and player.level
-  ctx.fillStyle = "gray";
+  ctx.fillStyle = "blue";
   ctx.font = "10px Arial";
   ctx.fillText(player.id.substring(10,15), x, y - 5);
   ctx.fillStyle = "black";
@@ -280,9 +278,9 @@ function drawBorder(offsetX, offsetY) {
   // Draw the borders
   ctx.fillStyle = "black";
   ctx.fillRect(offsetX, offsetY, viewportWidth, 5); // Top border
-  ctx.fillRect(offsetX, offsetY, 5, viewportHeight); // Left border
   ctx.fillRect(offsetX, offsetY + viewportHeight - 5, viewportWidth, 5); // Bottom border
   ctx.fillRect(offsetX + viewportWidth - 5, offsetY, 5, viewportHeight); // Right border
+  ctx.fillRect(offsetX, offsetY, 5, viewportHeight); // Left border
 
   ctx.restore();
 }
@@ -360,7 +358,7 @@ document.getElementById("tankTypeForm").addEventListener("submit", (event) => {
   setTankAttributes(tankType);
   document.getElementById("popup").style.display = "none";
   canvas.style.display = "block";
-  
+
   const data = {
     type: "activatePlayer",
   };
@@ -369,6 +367,7 @@ document.getElementById("tankTypeForm").addEventListener("submit", (event) => {
 
 function displayDestroyedMessage() {
   localTank.died = true;
+  canvas.style.display = "none";
   const messageElement = document.createElement("div");
   messageElement.style.position = "fixed";
   messageElement.style.top = "50%";
@@ -383,6 +382,7 @@ function displayDestroyedMessage() {
 }
 
 function displayErrorMessage(message) {
+  canvas.style.display = "none";
   const messageElement = document.createElement("div");
   messageElement.style.position = "fixed";
   messageElement.style.top = "50%";

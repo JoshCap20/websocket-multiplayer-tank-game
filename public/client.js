@@ -360,6 +360,11 @@ document.getElementById("tankTypeForm").addEventListener("submit", (event) => {
   setTankAttributes(tankType);
   document.getElementById("popup").style.display = "none";
   canvas.style.display = "block";
+  
+  const data = {
+    type: "activatePlayer",
+  };
+  socket.send(JSON.stringify(data));
 });
 
 function displayDestroyedMessage() {

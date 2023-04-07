@@ -34,7 +34,6 @@ let players = new Map();
 let bullets = new Map();
 let aiTanks = new Map();
 let obstacles = generateRandomObstacles(); 
-createAiTank();
 
 wss.on("connection", (ws) => {
   let playerId = createPlayerId();
@@ -402,8 +401,8 @@ function getRandomSpawnPoint() {
 }
 
 function avoidObstacles(x, y) {
-  const detectionRadius = 100;
-  const avoidStrength = 2;
+  const detectionRadius = 190;
+  const avoidStrength = 5;
   let steerX = 0;
   let steerY = 0;
 
@@ -438,8 +437,10 @@ setInterval(() => {
   players.forEach((player) => {
     player.health = Math.min(player.health + 1, 100);
   });
-  if (players.size + aiTanks.size < 3) {
-    createAiTank();
+  if (players.size + aiTanks.size < 5) {
+    for (let i = 0; i < 5 - (players.size + aiTanks.size); i++) {
+      createAiTank();
+    }
   }
 }
 , 3000);

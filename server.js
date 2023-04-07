@@ -27,8 +27,8 @@ server.on('error', errorHandler);
 
 const wss = new WebSocket.Server({ server });
 
-const mapHeight = Math.random() * 1000 + 500;
-const mapWidth = Math.random() * 1000 + 500;
+const mapHeight = Math.random() * 1000 + 1000;
+const mapWidth = Math.random() * 1000 + 1000;
 
 let players = new Map();
 let bullets = new Map();
@@ -43,6 +43,8 @@ wss.on("connection", (ws) => {
     id: playerId,
     x: spawnPoint.x,
     y: spawnPoint.y,
+    height: 40,
+    width: 20,
     rotation: 0,
     health: 100,
     level: 1,
@@ -65,7 +67,7 @@ wss.on("connection", (ws) => {
       case "disconnect":
         players.delete(playerId);
         break;
-      case "activatePlayer": // Add this case
+      case "activatePlayer": 
         activatePlayer(playerId);
         break;
     }
@@ -125,30 +127,47 @@ function updateBullets() {
 
     players.forEach((player, playerId) => {
       if (playerId !== bullet.playerId && player.active) {
-        let dx = player.x - bullet.x;
-        let dy = player.y - bullet.y;
-        let distance = Math.sqrt(dx * dx + dy * dy);
+        // use player.height and player.width 
+        // instead of hard coded values
+        if (
+          bullet.x > player.x - player.width &&
+          bullet.x < player.x + player.width &&
+          bullet.y > player.y - player.height &&
+          bullet.y < player.y + player.height
+        ) {
 
-        if (distance < 40) {
+        // let dx = player.x - bullet.x;
+        // let dy = player.y - bullet.y;
+        // let distance = Math.sqrt(dx * dx + dy * dy);
+
+        // if (distance < 15) {
           // Calculate damage based on the attacker's level up to 20 a shot
           const attacker = players.get(bullet.playerId);
           if (attacker == null || attacker == undefined) {
             player.health -= 5;
+            bullets.delete(bulletId);
+            if (player.health <= 0) {
+              // Remove destroyed player
+              sendDestroyed(playerId);
+              players.delete(playerId);
+            }
             return;
           } 
           const damage = Math.min(5 + (attacker.level - 1) / 2, 20);
 
           player.health -= damage;
           bullets.delete(bulletId);
-          console.log(
-            `(Bullet hit) Attacker: ${attacker.id}, Victim: ID: ${player.id}, Health Left: ${player.health}`
-          );
 
           if (player.health <= 0) {
             // Level up player, keep track of kills
             attacker.kills++;
             attacker.level++;
-            attacker.health+=40;
+            if (attacker.health >= 50) {
+              attacker.health = 100;
+            } else {
+              attacker.health+=50;
+            }
+            
 
             console.log(
               `(Player killed) Attacker: ID: ${attacker.id}, Kills: ${attacker.kills}, Level: ${attacker.level}`
@@ -169,9 +188,18 @@ function updateBullets() {
         let dy = ai.y - bullet.y;
         let distance = Math.sqrt(dx * dx + dy * dy);
   
-        if (distance < 40) {
+        if (distance < 20) {
           const attacker = players.get(bullet.playerId);
-          if (attacker == null || attacker == undefined) return;
+          if (attacker == null || attacker == undefined) {
+            ai.health -= 5;
+            bullets.delete(bulletId);
+            if (ai.health <= 0) {
+              // Remove destroyed AI
+              aiTanks.delete(ai.id);
+              players.delete(ai.id);
+            }
+            return;
+          } 
           const damage = Math.min(5 + (attacker.level - 1) / 2, 20); // Calculate damage based on the attacker's level
           ai.health -= damage;
           bullets.delete(bulletId);
@@ -179,12 +207,11 @@ function updateBullets() {
             // Level up player, keep track of kills
             attacker.kills++;
             attacker.level++;
-            if (attacker.health <= 60) {
-              attacker.health += 40;
+            if (attacker.health <= 50) {
+              attacker.health += 50;
             } else {
               attacker.health = 100;
             }
-            
 
             console.log(
               `(Player killed) Attacker: ID: ${attacker.id}, Kills: ${attacker.kills}, Level: ${attacker.level}`
@@ -226,11 +253,10 @@ function createAiTank() {
     y: spawnPoint.y,
     rotation: 0,
     health: 100,
-    level: 1,
+    level: 1 + Math.floor(Math.random() * 3),
     kills: 0,
     isAi: true,
-    shootCounter: 0,
-    shootCooldown: 5,
+    lastShot: Date.now(),
   };
   players.set(aiTank.id, aiTank);
   aiTanks.set(aiTank.id, aiTank);
@@ -239,8 +265,6 @@ function createAiTank() {
 function updateAiTanks() {
   aiTanks.forEach((aiTank) => {
     if (aiTank.health <= 0) return;
-
-    aiTank.shootCounter++;
     let closestPlayer = null;
     let closestDistance = Infinity;
 
@@ -271,20 +295,28 @@ function updateAiTanks() {
         let newX = aiTank.x + desiredX + avoid.x;
         let newY = aiTank.y + desiredY + avoid.y;
       
-        if (!collidesWithObstacle(newX, newY, 40, 20)) {
+        if (!collidesWithObstacle(newX, newY, 30, 30)) {
           aiTank.x = newX;
           aiTank.y = newY;
         }
       }
 
-      if (aiTank.shootCounter < aiTank.shootCooldown) {
+      // If aiTank.lastShot was more than 2 seconds ago
+      if (aiTank.lastShot + 2000 < Date.now()) {
         // Make the AI tank fire
-        let data = {
-          x: aiTank.x + Math.cos(aiTank.rotation),
-          y: aiTank.y + Math.sin(aiTank.rotation),
-          rotation: aiTank.rotation,
-        };
-        addBullet(aiTank.id, data);
+        const bullets = aiTank.level >= 3 ? 2 : 1;
+        const offsets = bullets == 2 ? [-2, 3] : [0];
+        for (let offset of offsets) {
+          for (let i = 0; i < bullets; i++) {
+            let data = {
+              x: aiTank.x + offset + Math.cos(aiTank.rotation),
+              y: aiTank.y + offset + Math.sin(aiTank.rotation),
+              rotation: aiTank.rotation,
+            };
+            addBullet(aiTank.id, data);
+          }
+        }
+        aiTank.lastShot = Date.now();
       }
 
     }
@@ -293,6 +325,10 @@ function updateAiTanks() {
 
 
 function sendLevelUp(attackerId, attackerLevel) {
+  // get player and adjust their heigth and width
+  let player = players.get(attackerId);
+  player.width = 40 + (player.level * 3);
+
   let levelUpData = {
     type: "levelUp",
     playerId: attackerId,
@@ -320,12 +356,12 @@ function sendDestroyed(playerId) {
 function generateRandomObstacles() {
   const obstacles = [];
 
-  const obstacleDensity = 0.00003; // Adjust this value to control the number of obstacles per square unit
+  const obstacleDensity = 0.00001; // Adjust this value to control the number of obstacles per square unit
   const numObstacles = Math.floor(obstacleDensity * mapWidth * mapHeight);
 
   for (let i = 0; i < numObstacles; i++) {
-    const x = Math.random() * (mapWidth - 100);
-    const y = Math.random() * (mapHeight - 100);
+    const x = Math.random() * (mapWidth - 10);
+    const y = Math.random() * (mapHeight - 10);
     const width = 50 + Math.random() * 100;
     const height = 50 + Math.random() * 100;
 
@@ -354,10 +390,10 @@ function getRandomSpawnPoint() {
   let validSpawn = false;
 
   while (!validSpawn) {
-    x = Math.random() * (mapWidth - 40) + 20;
-    y = Math.random() * (mapHeight - 40) + 20;
+    x = Math.random() * (mapWidth - 100) + 50;
+    y = Math.random() * (mapHeight - 100) + 50;
 
-    if (!collidesWithObstacle(x, y, 40, 20)) {
+    if (!collidesWithObstacle(x, y, 60, 50)) {
       validSpawn = true;
     }
   }
@@ -402,10 +438,7 @@ setInterval(() => {
   players.forEach((player) => {
     player.health = Math.min(player.health + 1, 100);
   });
-  aiTanks.forEach((ai) => {
-    ai.shootCounter = 0;
-  });
-  if (players.size + aiTanks.size < 10) {
+  if (players.size + aiTanks.size < 3) {
     createAiTank();
   }
 }

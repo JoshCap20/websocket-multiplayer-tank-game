@@ -19,17 +19,16 @@ A simple, fast-paced, multiplayer tank game built using Node.js and JavaScript t
 
 ## Installation
 1. Clone the repository:
-   ```bash  
-   git clone https://github.com/JoshCap20/websocket-world-of-tanks```
+   ```git clone https://github.com/JoshCap20/websocket-multiplayer-tank-game.git```
 
 2. Change directory to the project folder:
-    ```cd websocket-world-of-tanks```
+    ```cd websocket-multiplayer-tank-game```
 
 3. Install the dependencies:
     ```npm install```
 
 ## Running the game (Server)
-Start the WebSocket and HTTP server:  
+Start the WebSocket and HTTP server (from project folder):  
     ```npm start```
 
 

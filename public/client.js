@@ -99,25 +99,51 @@ class Tank {
 }
 
 // Input handling
+let keys = {
+  ArrowUp: false,
+  ArrowRight: false,
+  ArrowLeft: false,
+  ArrowDown: false,
+};
+
 document.addEventListener("keydown", (e) => {
-  switch (e.key) {
-    case "ArrowUp":
-      localTank.moveForward();
-      break;
-    case "ArrowLeft":
-      localTank.rotateLeft();
-      break;
-    case "ArrowRight":
-      localTank.rotateRight();
-      break;
-    case "ArrowDown":
-      localTank.moveBackward();
-      break;
-    case " ":
-      localTank.fire();
-      break;
+  if (!localTank) return;
+
+  if (keys.hasOwnProperty(e.key)) {
+    keys[e.key] = true;
+  }
+
+  if (keys.ArrowUp && keys.ArrowRight) {
+    localTank.moveForward();
+    localTank.rotateRight();
+  } else if (keys.ArrowUp && keys.ArrowLeft) {
+    localTank.moveForward();
+    localTank.rotateLeft();
+  } else if (keys.ArrowDown && keys.ArrowRight) {
+    localTank.moveBackward();
+    localTank.rotateRight();
+  } else if (keys.ArrowDown && keys.ArrowLeft) {
+    localTank.moveBackward();
+    localTank.rotateLeft();
+  } else if (keys.ArrowUp) {
+    localTank.moveForward();
+  } else if (keys.ArrowRight) {
+    localTank.rotateRight();
+  } else if (keys.ArrowLeft) {
+    localTank.rotateLeft();
+  } else if (keys.ArrowDown) {
+    localTank.moveBackward();
+  } else if (e.key === " ") {
+    localTank.fire();
   }
 });
+
+document.addEventListener("keyup", (e) => {
+  if (keys.hasOwnProperty(e.key)) {
+    keys[e.key] = false;
+  }
+});
+
 
 socket.onmessage = (event) => {
   let data = JSON.parse(event.data);
@@ -329,8 +355,8 @@ function setTankAttributes(tankType) {
   localTank.type = tankType;
   switch (tankType) {
     case "light":
-      localTank.speed = 8;
-      localTank.cooldown = 250;
+      localTank.speed = 6;
+      localTank.cooldown = 130;
       break;
     case "medium":
       localTank.bullets = 2;
@@ -376,7 +402,7 @@ function displayDestroyedMessage() {
   messageElement.style.fontSize = "24px";
   messageElement.style.fontWeight = "bold";
   messageElement.style.color = "red";
-  messageElement.innerText = "Your tank was destroyed!";
+  messageElement.innerHTML = "Your tank was destroyed! <br> <br> <a href='javascript:void(0);' onclick='window.location.reload();'>Play again</a>";
 
   document.body.appendChild(messageElement);
 }

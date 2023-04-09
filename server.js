@@ -161,10 +161,10 @@ function updateBullets() {
             // Level up player, keep track of kills
             attacker.kills++;
             attacker.level++;
-            if (attacker.health >= 50) {
+            if (attacker.health >= 80) {
               attacker.health = 100;
             } else {
-              attacker.health+=50;
+              attacker.health += 20;
             }
             
 
@@ -437,7 +437,7 @@ setInterval(() => {
   players.forEach((player) => {
     player.health = Math.min(player.health + 1, 100);
   });
-  if (players.size + aiTanks.size < 5) {
+  if (players.size + aiTanks.size < 4) {
     for (let i = 0; i < 5 - (players.size + aiTanks.size); i++) {
       createAiTank();
     }
